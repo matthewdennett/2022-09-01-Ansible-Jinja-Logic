@@ -1,0 +1,28 @@
+---
+- name: Ansible Jinja Logic
+  gather_facts: false
+  hosts: localhost
+  vars:
+    server_list:
+      - name: server1.example.com
+      - name: server2.example.com
+      - name: server3.example.com
+  tasks:
+
+  - name: Set facts example 2
+    set_fact:
+      output: >-
+        {%- set output_list = [] -%}
+        {%- for server in server_list -%}
+          {%- set my_server = {
+                'name': server.name, 
+                'type': 'IPv4'
+              } 
+          -%}
+          {{ output_list.append( my_server ) }}
+        {%- endfor -%}
+        {{ output_list }}
+
+  - name: Print Output
+    debug: 
+      var: output
