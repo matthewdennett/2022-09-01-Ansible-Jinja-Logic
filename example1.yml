@@ -3,20 +3,26 @@
   gather_facts: false
   hosts: localhost
   vars:
-    server_list:
-      - name: server1.example.com
-      - name: server2.example.com
-      - name: server3.example.com
+    # server_list:
+    #   - name: server1.example.com
+    #   - name: server2.example.com
+    #   - name: server3.example.com
   tasks:
-
-  - name: Set facts example 1
+  
+  - name: Example 1 - Set facts 
     set_fact:
       output: >-
         {%- set output_list = [] -%}
-        {%- for server in server_list -%}
-          {%- set my_server = {'name': server.name, 'type': 'IPv4'} -%}
-          {{ output_list.append( my_server ) }}
-        {%- endfor -%}
+        {%- if server_list is defined -%}
+          {%- for server in server_list -%}
+            {%- set my_server = {
+                  'name': server.name, 
+                  'type': 'IPv4'
+                } 
+            -%}
+            {{ output_list.append( my_server ) }}
+          {%- endfor -%}
+        {%- endif -%}
         {{ output_list }}
 
   - name: Print Output

@@ -7,20 +7,28 @@
       - name: server1.example.com
       - name: server2.example.com
       - name: server3.example.com
+        ipv6: true
   tasks:
 
-  - name: Set facts example 2
+  - name: Example 3 - Set facts 
     set_fact:
       output: >-
         {%- set output_list = [] -%}
-        {%- for server in server_list -%}
-          {%- set my_server = {
-                'name': server.name, 
-                'type': 'IPv4'
-              } 
-          -%}
-          {{ output_list.append( my_server ) }}
-        {%- endfor -%}
+        {%- if server_list is defined -%}
+          {%- for server in server_list -%}
+            {%- if server.ipv6 is defined and server.ipv6 == true -%}
+              {%- set v4v6 = 'IPv6' -%}
+            {%- else -%}
+              {%- set v4v6 = 'IPv4' -%}
+            {%- endif -%}
+            {%- set my_server = {
+                  'name': server.name, 
+                  'type': v4v6
+                } 
+            -%}
+            {{ output_list.append( my_server ) }}
+          {%- endfor -%}
+        {%- endif -%}
         {{ output_list }}
 
   - name: Print Output
