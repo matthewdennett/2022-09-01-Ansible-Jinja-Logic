@@ -2,16 +2,16 @@
 - name: Ansible Jinja Logic
   gather_facts: false
   hosts: localhost
-  vars:
-    # server_list:
-    #   - name: server1.example.com
-    #   - name: server2.example.com
-    #   - name: server3.example.com
   tasks:
   
-  - name: Example 1 - Set facts 
+  - name: Example 1A - Server list defined
+    vars:
+      server_list:
+        - name: server1.example.com
+        - name: server2.example.com
+        - name: server3.example.com
     set_fact:
-      output: >-
+      output_1a: >-
         {%- set output_list = [] -%}
         {%- if server_list is defined -%}
           {%- for server in server_list -%}
@@ -25,6 +25,27 @@
         {%- endif -%}
         {{ output_list }}
 
-  - name: Print Output
+
+  - name: Example 1B - Server list NOT defined
+    set_fact:
+      output_1b: >-
+        {%- set output_list = [] -%}
+        {%- if server_list is defined -%}
+          {%- for server in server_list -%}
+            {%- set my_server = {
+                  'name': server.name, 
+                  'type': 'IPv4'
+                } 
+            -%}
+            {{ output_list.append( my_server ) }}
+          {%- endfor -%}
+        {%- endif -%}
+        {{ output_list }}
+
+  - name: Print output - Server list defined
     debug: 
-      var: output
+      var: output_1a
+
+  - name: Print output - Server list NOT defined
+    debug: 
+      var: output_1b
